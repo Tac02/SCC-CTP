@@ -1,5 +1,9 @@
 import pandas as pd
 import warnings
+import os
+from pathlib import Path
+import tkinter as tk
+from tkinter import filedialog, messagebox
 
 
 def process_cadet_file(input_file, output_file, master_module_file="module_list.csv"):
@@ -233,4 +237,76 @@ def process_cadet_file(input_file, output_file, master_module_file="module_list.
 
 
 
-process_cadet_file("downloads/Cadet Qualifications Report.csv", "CTP_Tracker.xlsx")
+def launch_gui():
+    root = tk.Tk()
+    root.title("CTP Processor")
+    root.resizable(False, False)
+
+    script_dir = Path(__file__).parent
+    default_input_rel = Path("downloads") / "Cadet Qualifications Report.csv"
+    default_output_name = "CTP_Tracker.xlsx"
+
+    default_input = str((script_dir / default_input_rel).resolve()) if (script_dir / default_input_rel).exists() else str(script_dir / default_input_rel)
+    default_output = str((script_dir / default_output_name).resolve())
+
+    input_var = tk.StringVar(value=default_input)
+    output_var = tk.StringVar(value=default_output)
+
+    frm = tk.Frame(root, padx=10, pady=10)
+    frm.pack(fill=tk.BOTH, expand=True)
+
+    tk.Label(frm, text="Input file:").grid(row=0, column=0, sticky="w")
+    input_entry = tk.Entry(frm, textvariable=input_var, width=60)
+    input_entry.grid(row=0, column=1, padx=6, pady=3)
+    def browse_input():
+        ini_dir = str((script_dir / "downloads").resolve()) if (script_dir / "downloads").exists() else str(script_dir)
+        filename = filedialog.askopenfilename(title="Select input file", initialdir=ini_dir, filetypes=[("CSV/Excel", "*.csv *.xls *.xlsx"), ("All files", "*.*")])
+        if filename:
+            input_var.set(filename)
+            # if output is still default, set output to same folder with .xlsx name
+            try:
+                if Path(output_var.get()).name == default_output_name:
+                    output_var.set(str(Path(filename).with_suffix('.xlsx')))
+            except Exception:
+                pass
+
+    tk.Button(frm, text="Browse...", command=browse_input).grid(row=0, column=2, padx=6)
+
+    tk.Label(frm, text="Output file:").grid(row=1, column=0, sticky="w")
+    output_entry = tk.Entry(frm, textvariable=output_var, width=60)
+    output_entry.grid(row=1, column=1, padx=6, pady=3)
+    def browse_output():
+        ini_dir = str(Path(output_var.get()).parent) if output_var.get() else str(script_dir)
+        filename = filedialog.asksaveasfilename(title="Select output file", defaultextension=".xlsx", initialdir=ini_dir, initialfile=Path(output_var.get()).name if output_var.get() else default_output_name, filetypes=[("Excel files", "*.xlsx"), ("All files", "*.*")])
+        if filename:
+            output_var.set(filename)
+
+    tk.Button(frm, text="Browse...", command=browse_output).grid(row=1, column=2, padx=6)
+
+    btn_frame = tk.Frame(frm)
+    btn_frame.grid(row=2, column=0, columnspan=3, pady=(10,0))
+
+    def on_ok():
+        inpf = input_var.get()
+        outf = output_var.get()
+        if not inpf:
+            messagebox.showerror("Error", "Please select an input file")
+            return
+        if not outf:
+            messagebox.showerror("Error", "Please select an output file")
+            return
+        try:
+            process_cadet_file(inpf, outf)
+            messagebox.showinfo("Done", f"Processed file saved as:\n{outf}")
+            root.destroy()
+        except Exception as e:
+            messagebox.showerror("Processing error", str(e))
+
+    tk.Button(btn_frame, text="OK", width=12, command=on_ok).pack(side=tk.LEFT, padx=6)
+    tk.Button(btn_frame, text="Cancel", width=12, command=root.destroy).pack(side=tk.LEFT, padx=6)
+
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    launch_gui()
