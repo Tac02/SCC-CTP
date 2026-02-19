@@ -3,7 +3,7 @@
 This App is designed to take a single download of all CTP training on Westminster for a unit, and convert it into a readable format to allow Unit Training Officers (UTOs) to effectively plan and track training. 
 This repository includes a packaged Windows executable for the CTP processor. The executable presents a small GUI where users can select the input cadet CSV/Excel file and choose the output file name and destination.
 
-- Download the latest version of the ctp_processor.exe and Module_list.csv from [here](https://github.com/Tac02/SCC-CTP/releases)
+- Download the latest version of the ctp_processor.exe and Module_list.csv from [here](https://github.com/Tac02/SCC-CTP/releases) 
 
 - **Run the EXE:** Double-click the produced `ctp_processor.exe` (or run from Command Prompt).
 - **Select input file:** Browse to your cadet data file (CSV, .xls, .xlsx). 
