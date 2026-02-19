@@ -26,3 +26,7 @@ Follow these steps to download the data file.
 - Click "Download"
 
 - It is recommended that the CTP report you have just generated is saved for future reference. to do this select "Actions", "Save Report" and give the report a name and description. It will then appear in the dropdown under "Primary Report" for future use. 
+
+## Issues
+
+If you discover any errors in the app, have any queries about how to use the app or have an updated module_list you would like to share, please raise and Issue (the issues tab at the top, followed by New Issue)
